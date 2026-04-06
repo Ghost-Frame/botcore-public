@@ -6,6 +6,7 @@
 Discord bot library. You write a persona file, point it at a local LLM, and the bot develops personality over time through conversation.
 
 "No data leaves your machine unless you explicitly configure an external memory server."
+
 Think about the security of wherever you host your database, its second nature for me to consider that so I guess I need to hammer that in up top. 
 
 <img width="2892" height="1787" alt="Screenshot 2026-04-06 124809" src="https://github.com/user-attachments/assets/f66384ec-5522-4dff-a86f-af972a11ed18" />

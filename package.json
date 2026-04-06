@@ -1,0 +1,12 @@
+{
+  "name": "botcore",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./core": "./src/core/index.ts",
+    "./engine": "./src/engine/index.ts",
+    "./gateway": "./src/gateway/index.ts"
+  },
+  "dependencies": {}
+}

@@ -254,6 +254,39 @@ Full type in `src/types.ts`. Required fields:
 
 Optional: `memoryUrl`, `memoryToken`, `botSource`, `llmUnixSocket`, `llmMaxTokens`, `llmTemperature`, `llmTimeoutMs`, `contextWindow`, and all tuning fields above.
 
+## Security
+
+### Data flow
+
+By default, all data stays on your machine. Messages are stored in a local SQLite database and the LLM runs locally.
+
+If you configure external services, data leaves your machine:
+
+- **`llmUrl` pointing to a remote API** -- full chat history, usernames, and system prompt are sent to that endpoint on every response. This includes memory context and attachment content.
+- **`memoryUrl` set** -- conversation snippets are sent to and recalled from the external memory server. This can include usernames and message content across sessions.
+
+There is no built-in redaction or consent mechanism. If you point botcore at a third-party LLM API, that service receives everything the bot sees. Operators should inform their Discord server members if conversations are being sent to external services.
+
+### Moderation actions
+
+Moderation (kick, ban, role changes) is gated behind owner-only authorization. Actions only execute when every human message in the processing batch is from the configured `ownerUserId`. Mixed batches (owner + non-owner messages in the same window) are rejected.
+
+The `createModeration` function accepts an optional `protectedIds` parameter -- a `Set<string>` of user IDs that can never be targeted by moderation actions, regardless of LLM output. Operators should include their own user ID and the bot's user ID:
+
+```ts
+const moderation = createModeration(discordApi, guildId, new Set([
+  config.ownerUserId,
+  transport.getSelfId(),
+]));
+```
+
+### Self-hosting recommendations
+
+- Run in private servers with trusted members if moderation actions are enabled
+- Use local LLM inference when possible to keep conversations off third-party servers
+- Review GROWTH.md periodically -- it accumulates personality notes from LLM reflections
+- Set `maxGrowthBytes` to limit growth file size (default 16KB)
+
 ## License
 
 [MIT](LICENSE)

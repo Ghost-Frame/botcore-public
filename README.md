@@ -29,14 +29,14 @@ Cloud APIs (OpenAI, Together, OpenRouter, etc.) also work -- any service with an
 
 A message hits Discord. botcore does the rest:
 
-1. **Targeting** -- Should the bot respond? It checks mentions, name references, owner messages, and conversation context. Ambient messages roll against `responseChance`.
-2. **Debouncing** -- Messages batch over a few seconds so the bot reads a natural chunk, not one message at a time.
-3. **Memory recall** -- The bot searches stored memories for anything relevant to the current conversation.
-4. **Context assembly** -- Persona, growth notes, chat history, memory context, and conversation hints get packed into a prompt.
-5. **LLM call** -- Goes to any OpenAI-compatible endpoint. Ollama, vLLM, llama.cpp, LM Studio.
-6. **Output cleaning** -- Strips leaked XML tags, internal metadata, and moderation action markup. Splits long responses at natural breakpoints.
-7. **Growth reflection** -- After some conversations, the bot reflects on what happened and writes a note. These notes accumulate and feed back into the persona.
-8. **Memory capture** -- The conversation gets stored for future recall.
+1. **Targeting** - Should the bot respond? It checks mentions, name references, owner messages, and conversation context. Ambient messages roll against `responseChance`.
+2. **Debouncing** - Messages batch over a few seconds so the bot reads a natural chunk, not one message at a time.
+3. **Memory recall** - The bot searches stored memories for anything relevant to the current conversation.
+4. **Context assembly** - Persona, growth notes, chat history, memory context, and conversation hints get packed into a prompt.
+5. **LLM call** - Goes to any OpenAI-compatible endpoint. Ollama, vLLM, llama.cpp, LM Studio.
+6. **Output cleaning** - Strips leaked XML tags, internal metadata, and moderation action markup. Splits long responses at natural breakpoints.
+7. **Growth reflection** - After some conversations, the bot reflects on what happened and writes a note. These notes accumulate and feed back into the persona.
+8. **Memory capture** - The conversation gets stored for future recall.
 
 ## Architecture
 
@@ -133,7 +133,7 @@ The bot creates its SQLite database and GROWTH.md file automatically on first ru
 
 ### Local (default)
 
-With no `memoryUrl` set, botcore stores conversation snippets in a `memories` table alongside chat history. Recall uses keyword matching weighted by recency -- a 7-day half-life, so recent conversations score higher.
+With no `memoryUrl` set, botcore stores conversation snippets in a `memories` table alongside chat history. Recall uses keyword matching weighted by recency - a 7-day half-life, so recent conversations score higher.
 
 Capture happens after each response. Recall happens before each response. Zero config.
 
@@ -143,7 +143,7 @@ Set `memoryUrl` to point at a memory server with `/recall`, `/memories/search`, 
 
 ## Writing a Persona File
 
-The persona file is the system prompt. It defines who the bot is. Growth notes get appended to it automatically. The file hot-reloads -- edit it while the bot runs.
+The persona file is the system prompt. It defines who the bot is. Growth notes get appended to it automatically. The file hot-reloads - edit it while the bot runs.
 
 ### Include These
 

@@ -4,3 +4,4 @@ dist/
 *.sqlite
 .env
 GROWTH.md
+SECURITY-AUDIT-PROMPT.md

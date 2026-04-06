@@ -31,7 +31,7 @@ Ollama serves an OpenAI-compatible API at `http://localhost:11434/v1/chat/comple
 
 Larger models produce better personality. 8B parameter models work. 70B models are noticeably better at staying in character and picking up social cues. Use whatever your hardware can run.
 
-Designed for local inference. Cloud APIs (OpenAI, Together, OpenRouter, etc.) also work if you choose to use them -- any   
+Designed for local inference. Cloud APIs (OpenAI, Together, OpenRouter, etc.) also work if you choose to use them - any   
 service with an OpenAI-compatible chat completions endpoint. All LLM calls go only where you point them. Just set `llmUrl` 
 to the endpoint and add your API key via the `llmUnixSocket` override or a proxy.
 You can make your own API keys for your own services/LLMs. This does not depend on a third party in any way.

@@ -17,7 +17,25 @@ export function isImageFile(name: string): boolean {
   return dot !== -1 && IMAGE_EXTENSIONS.has(name.slice(dot).toLowerCase());
 }
 
+const ALLOWED_ATTACHMENT_HOSTS = new Set([
+  "cdn.discordapp.com",
+  "media.discordapp.net",
+]);
+
+function isAllowedAttachmentUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return ALLOWED_ATTACHMENT_HOSTS.has(parsed.hostname);
+  } catch {
+    return false;
+  }
+}
+
 export async function fetchAttachment(url: string, maxChars = 8000): Promise<string | null> {
+  if (!isAllowedAttachmentUrl(url)) {
+    console.log(`[attachments] Blocked fetch to non-Discord host: ${url}`);
+    return null;
+  }
   try {
     const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
     if (!res.ok) return null;

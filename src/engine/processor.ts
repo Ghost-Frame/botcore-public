@@ -134,7 +134,15 @@ export function createProcessor(deps: ProcessorDeps) {
       }
 
       const replyTarget = targeting.pickReplyTarget(batch, channelId);
-      const isOwnerCommand = directlyAddr && batch.some(m => m.userId === ownerUserId);
+
+      // Security: owner auth must be per-message, not per-batch.
+      // If ANY non-owner human is in this batch, do not treat as owner-authorized.
+      // This prevents confused-deputy attacks where an attacker's prompt injection
+      // rides in the same debounce window as an owner message.
+      const humanMessages = batch.filter(m => !m.isBot);
+      const isOwnerCommand = directlyAddr
+        && humanMessages.length > 0
+        && humanMessages.every(m => m.userId === ownerUserId);
 
       // Reaction-only path
       if (Math.random() < reactionChance && !allBots) {

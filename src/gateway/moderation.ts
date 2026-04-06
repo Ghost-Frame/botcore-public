@@ -3,6 +3,7 @@ import type { BotAction, GuildRole } from "../types";
 export function createModeration(
   discordApi: (path: string, options?: RequestInit) => Promise<Response>,
   guildId: string,
+  protectedIds: Set<string> = new Set(),
 ) {
   let guildRoles: GuildRole[] = [];
 
@@ -28,7 +29,12 @@ export function createModeration(
     const byId = guildRoles.find(r => r.id === nameOrId);
     if (byId) return byId;
     const lower = nameOrId.toLowerCase();
-    return guildRoles.find(r => r.name.toLowerCase() === lower) || null;
+    const matches = guildRoles.filter(r => r.name.toLowerCase() === lower);
+    if (matches.length > 1) {
+      console.log(`[moderation] Ambiguous role name "${nameOrId}" matches ${matches.length} roles -- aborting`);
+      return null;
+    }
+    return matches[0] || null;
   }
 
   function getRoles(): GuildRole[] {
@@ -80,6 +86,10 @@ export function createModeration(
 
   async function executeActions(actions: BotAction[]): Promise<void> {
     for (const action of actions) {
+      if (protectedIds.has(action.target)) {
+        console.log(`[moderation] BLOCKED action ${action.type} -- target ${action.target} is protected`);
+        continue;
+      }
       let result: string;
       switch (action.type) {
         case "add_role":

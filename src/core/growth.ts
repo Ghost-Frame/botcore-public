@@ -94,11 +94,20 @@ Rules:
         return null;
       }
 
+      // Security: strip action syntax and XML-like tags to prevent persistent
+      // prompt injection through growth reflections. An attacker can steer the
+      // LLM into writing durable behavioral instructions into GROWTH.md.
+      const sanitized = trimmed
+        .replace(/\[ACTION:\w+[^\]]*\]/gi, "")
+        .replace(/<\/?[a-z][^>]*>/gi, "")
+        .trim();
+      if (sanitized.length < 10) return null;
+
       const timestamp = new Date().toISOString().split("T")[0];
-      const entry = `\n- [${timestamp}] ${trimmed}`;
+      const entry = `\n- [${timestamp}] ${sanitized}`;
       appendGrowth(entry);
-      console.log(`[growth] New entry: ${trimmed.slice(0, 80)}...`);
-      return trimmed;
+      console.log(`[growth] New entry: ${sanitized.slice(0, 80)}...`);
+      return sanitized;
     } catch (err: any) {
       console.error(`[growth] Reflection error: ${err.message}`);
       return null;

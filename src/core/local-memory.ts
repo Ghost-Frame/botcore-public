@@ -2,14 +2,37 @@ import { Database } from "bun:sqlite";
 import { mkdirSync } from "fs";
 import { dirname } from "path";
 
-const INFRA_PATTERNS = [
-  "ssh -i", "sudo -s", "systemctl", "podman", "docker",
-  "passwd", "api_key", "api_secret", "bot_token",
+const INFRA_PATTERNS: RegExp[] = [
+  /ssh\s+(-i\s+|[\w@]+@)/i,
+  /sudo\s+(-s|su|passwd)/i,
+  /systemctl\s+(start|stop|restart|enable|disable)/i,
+  /\b(podman|docker)\s+(run|exec|build|push|pull|login)/i,
+  /\bpasswd\b/i,
+  /api[_\s-]*key\s*[=:]/i,
+  /api[_\s-]*secret\s*[=:]/i,
+  /bot[_\s-]*token\s*[=:]/i,
+  /bearer\s+[a-z0-9._\-]{20,}/i,
+  /-----BEGIN\s+(RSA\s+)?PRIVATE\s+KEY/i,
 ];
 
+function hasHighEntropy(text: string, threshold = 4.0): boolean {
+  const tokens = text.match(/[A-Za-z0-9+/=_\-]{20,}/g);
+  if (!tokens) return false;
+  for (const token of tokens) {
+    const freq = new Map<string, number>();
+    for (const ch of token) freq.set(ch, (freq.get(ch) || 0) + 1);
+    let entropy = 0;
+    for (const count of freq.values()) {
+      const p = count / token.length;
+      entropy -= p * Math.log2(p);
+    }
+    if (entropy >= threshold) return true;
+  }
+  return false;
+}
+
 function containsInfraContent(text: string): boolean {
-  const lower = text.toLowerCase();
-  return INFRA_PATTERNS.some(p => lower.includes(p));
+  return INFRA_PATTERNS.some(p => p.test(text)) || hasHighEntropy(text);
 }
 
 const STOP_WORDS = new Set([

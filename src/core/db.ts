@@ -49,9 +49,14 @@ export function createDB(dbPath: string): MessageDB {
   );
   const stmtClear = db.prepare("DELETE FROM messages WHERE channel_id = ?");
 
+  const MAX_CONTENT_LENGTH = 4000;
+
   return {
     addMessage(channelId, userId, username, role, content) {
-      stmtInsert.run(channelId, userId, username, role, content);
+      const truncated = content.length > MAX_CONTENT_LENGTH
+        ? content.slice(0, MAX_CONTENT_LENGTH) + "\n... [truncated]"
+        : content;
+      stmtInsert.run(channelId, userId, username, role, truncated);
     },
     getHistory(channelId, limit = 60) {
       const rows = stmtHistory.all(channelId, limit) as StoredMessage[];

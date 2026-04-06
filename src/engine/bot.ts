@@ -216,6 +216,11 @@ export function createBot(options: CreateBotOptions) {
       attachments: attachments.length > 0 ? attachments : undefined,
     };
 
+    const MAX_PENDING = 50;
+    if (chState.pendingMessages.length >= MAX_PENDING) {
+      console.log(`[${channelId}] Pending message cap (${MAX_PENDING}) hit, dropping oldest`);
+      chState.pendingMessages.splice(0, chState.pendingMessages.length - MAX_PENDING + 1);
+    }
     chState.pendingMessages.push(pending);
 
     // Debounce

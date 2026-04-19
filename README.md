@@ -7,9 +7,6 @@ Discord bot library. You write a persona file, point it at a local LLM, and the 
 
 All data stays local by default. No messages leave your machine unless you explicitly configure an external endpoint. Discord itself already stores these messages on its servers
 
-<img width="2892" height="1787" alt="Screenshot 2026-04-06 124809" src="https://github.com/user-attachments/assets/f66384ec-5522-4dff-a86f-af972a11ed18" />
-<img width="2848" height="1660" alt="Screenshot 2026-04-06 124936" src="https://github.com/user-attachments/assets/0fc1b37c-5d12-45b0-af8f-efa5cbee731d" />
-
 ## Requirements
 
 - [Bun](https://bun.sh) runtime
